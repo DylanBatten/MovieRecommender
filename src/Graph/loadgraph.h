@@ -17,7 +17,6 @@ inline Graph loadGraphFromDisk(const std::string& path) {
 
     Graph g;
 
-    // ----- Load movies -----
     if (!j.contains("movies") || !j["movies"].is_array()) {
         throw std::runtime_error("Graph file missing 'movies' array");
     }
@@ -25,23 +24,20 @@ inline Graph loadGraphFromDisk(const std::string& path) {
     for (const auto& jm : j["movies"]) {
         Movie m;
 
-        // required
         m.tmdbId = jm.at("tmdbId").get<int>();
         m.name  = jm.at("title").get<std::string>();
 
-        // optional
         if (jm.contains("genres") && jm["genres"].is_array()) {
             m.genres = jm["genres"].get<std::vector<std::string>>();
         }
         m.rating = jm.value("rating", 0.0);
         m.year   = jm.value("year", 0);
 
-        g.addMovie(m); // builds movies, adj (empty lists), and idToIndex
+        g.addMovie(m);
     }
 
     const std::size_t n = g.getMovies().size();
 
-    // ----- Load adjacency -----
     if (!j.contains("adj") || !j["adj"].is_array()) {
         throw std::runtime_error("Graph file missing 'adj' array");
     }
@@ -51,8 +47,6 @@ inline Graph loadGraphFromDisk(const std::string& path) {
         throw std::runtime_error("Graph 'adj' size does not match 'movies' size");
     }
 
-    // we need writable access to adj; add adjRef() in MovieGraph:
-    // std::vector<std::vector<Edge>>& adjRef() { return adj; }
     std::vector<std::vector<Edge>> adj = g.getAdj();
     adj.clear();
     adj.resize(n);

@@ -13,20 +13,17 @@ inline std::vector<int> topKRecommendations(
     const int n = static_cast<int>(res.distance.size());
     idx.reserve(n);
 
-    // collect only valid candidates (not src, reachable)
     for (int i = 0; i < n; ++i) {
         if (i == src) continue;
         if (!std::isfinite(res.distance[i])) continue;
         idx.push_back(i);
     }
 
-    // sort by distance ASC (smaller = better)
-    std::ranges::sort(idx,
-                      [&](const int a, const int b) {
-                          return res.distance[a] < res.distance[b];
-                      });
+    std::ranges::sort(idx, [&](const int a, const int b)
+        {
+            return res.distance[a] < res.distance[b];
+        });
 
-    // keep only top K
     if (static_cast<int>(idx.size()) > k) {
         idx.resize(k);
     }

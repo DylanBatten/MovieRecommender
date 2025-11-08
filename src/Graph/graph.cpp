@@ -16,7 +16,7 @@ int Graph::addMovie(const Movie& movie) {
 
     const int idx = static_cast<int>(movies.size());
     movies.push_back(movie);
-    adj.emplace_back();          // create adjacency list for this node
+    adj.emplace_back();
     idToIndex[id] = idx;
 
     return idx;

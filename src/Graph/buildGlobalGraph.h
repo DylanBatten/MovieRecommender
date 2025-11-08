@@ -23,15 +23,13 @@ inline void buildGlobalGraph(Graph& g, const std::vector<Movie>& all) {
         if (sims.empty()) continue;
 
         if (int K = 40; static_cast<int>(sims.size()) > K) {
-            std::ranges::nth_element(sims, sims.begin() + K
-                                     ,
-                                     [](auto& a, auto& b){ return a.first > b.first; }
+            std::ranges::nth_element(sims, sims.begin() + K,
+            [](auto& a, auto& b){ return a.first > b.first; }
             );
             sims.resize(K);
         } else {
-            std::ranges::sort(sims
-                              ,
-                              [](auto& a, auto& b){ return a.first > b.first; }
+            std::ranges::sort(sims,
+            [](auto& a, auto& b){ return a.first > b.first; }
             );
         }
 

@@ -19,10 +19,9 @@ public:
         curl_global_cleanup();
     }
 
-    // GET /movie/{movie_id}
     Movie fetchMovieById(int tmdbId) const {
-        const std::string url = baseUrl_ + "/movie/" + std::to_string(tmdbId) +
-                          "?api_key=" + apiKey_ + "&language=en-US";
+        const std::string url = baseUrl_ + "/movie/" + std::to_string(tmdbId)
+            + "?api_key=" + apiKey_ + "&language=en-US";
 
         nlohmann::json j = getJson(url);
 
@@ -53,9 +52,8 @@ public:
 
     // GET /search/movie
     std::vector<Movie> searchByTitle(const std::string& query, int limit = 5) const {
-        std::string url = baseUrl_ + "/search/movie?api_key=" + apiKey_ +
-                          "&language=en-US&include_adult=false&page=1&query=" +
-                          urlEncode(query);
+        std::string url = baseUrl_ + "/search/movie?api_key=" + apiKey_
+        + "&language=en-US&include_adult=false&page=1&query=" + urlEncode(query);
 
         nlohmann::json j = getJson(url);
 
@@ -70,11 +68,6 @@ public:
             Movie m;
             m.tmdbId = r.value("id", 0);
             m.name  = r.value("title", "");
-
-            if (r.contains("genre_ids") && r["genre_ids"].is_array()) {
-                // Optional: map IDs to names using /genre/movie/list
-                // For now, leave empty or fill later
-            }
 
             if (r.contains("vote_average") && !r["vote_average"].is_null())
                 m.rating = r["vote_average"].get<double>();
@@ -125,7 +118,6 @@ public:
                         m.year = std::stoi(date.substr(0, 4));
                 }
 
-                // genre_ids are here; mapping to names is optional for now
                 result.push_back(std::move(m));
             }
         }
@@ -136,8 +128,6 @@ public:
 private:
     std::string apiKey_;
     std::string baseUrl_;
-
-    // ===== HTTP helpers =====
 
     static size_t writeCallback(const char* ptr, size_t size, size_t nmemb, void* userdata) {
         auto* stream = static_cast<std::string*>(userdata);
@@ -163,25 +153,24 @@ private:
         curl_easy_cleanup(curl);
 
         if (res != CURLE_OK) {
-            throw std::runtime_error(std::string("curl_easy_perform failed: ") +
-                                     curl_easy_strerror(res));
+            throw std::runtime_error(std::string("curl_easy_perform failed: ")
+                + curl_easy_strerror(res));
         }
         if (httpCode < 200 || httpCode >= 300) {
-            throw std::runtime_error("TMDB HTTP error " + std::to_string(httpCode) +
-                                     " | body: " + response);
+            throw std::runtime_error("TMDB HTTP error " + std::to_string(httpCode)
+                + " | body: " + response);
         }
 
         try {
             return nlohmann::json::parse(response);
         } catch (const std::exception& e) {
-            throw std::runtime_error(std::string("JSON parse failed: ") +
-                                     e.what() + " | body: " + response);
+            throw std::runtime_error(std::string("JSON parse failed: ")
+                + e.what() + " | body: " + response);
         }
     }
 
-    // minimal URL encoder (enough for queries)
     static std::string urlEncode(const std::string& s) {
-        static const char* hex = "0123456789ABCDEF";
+        static auto hex = "0123456789ABCDEF";
         std::string out;
         for (unsigned char c : s) {
             if (('a' <= c && c <= 'z') ||

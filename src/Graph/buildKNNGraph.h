@@ -23,17 +23,14 @@ inline void buildKNNGraph(Graph& g, const int K) {
 
         if (sims.empty()) continue;
 
-        // keep top-K most similar neighbors
         if (static_cast<int>(sims.size()) > K) {
-            std::ranges::nth_element(sims, sims.begin() + K
-                                     ,
-                                     [](auto& a, auto& b){ return a.first > b.first; }
+            std::ranges::nth_element(sims, sims.begin() + K,
+            [](auto& a, auto& b){ return a.first > b.first; }
             );
             sims.resize(K);
         } else {
-            std::ranges::sort(sims
-                              ,
-                              [](auto& a, auto& b){ return a.first > b.first; }
+            std::ranges::sort(sims,
+            [](auto& a, auto& b){ return a.first > b.first; }
             );
         }
 
