@@ -14,8 +14,10 @@ TmdbAPI::~TmdbAPI() {
 }
 
 Movie TmdbAPI::fetchMovieById(const int tmdbId) const {
-    const std::string url = baseUrl_ + "/movie/" + std::to_string(tmdbId)
-        + "?api_key=" + apiKey_ + "&language=en-US";
+    const std::string url = baseUrl_ +
+        "/movie/" + std::to_string(tmdbId) +
+        "?api_key=" + apiKey_ +
+        "&language=en-US";
 
     nlohmann::json j = getJson(url);
 
@@ -23,61 +25,25 @@ Movie TmdbAPI::fetchMovieById(const int tmdbId) const {
     m.tmdbId = j.value("id", tmdbId);
     m.name   = j.value("title", "");
 
-    if (j.contains("genres")) {
-        for (auto& g : j["genres"]) {
-            if (g.contains("name") && !g["name"].is_null()) {
-                m.genres.push_back(g["name"].get<std::string>());
+    if (j.contains("genres") && j["genres"].is_array()) {
+        for (const auto& g : j["genres"]) {
+            if (const auto& name = g["name"]; name.is_string()) {
+                m.genres.push_back(name.get<std::string>());
             }
         }
     }
 
-    if (j.contains("vote_average") && !j["vote_average"].is_null())
+    if (j.contains("vote_average") && j["vote_average"].is_number()) {
         m.rating = j["vote_average"].get<double>();
+    }
 
     if (j.contains("release_date") && j["release_date"].is_string()) {
-        if (const auto date = j["release_date"].get<std::string>(); date.size() >= 4) {
+        if (const std::string date = j["release_date"].get<std::string>(); date.size() >= 4) {
             m.year = std::stoi(date.substr(0, 4));
         }
     }
 
     return m;
-}
-
-std::vector<Movie> TmdbAPI::searchByTitle(const std::string& query,
-                                          const int limit) const {
-    const std::string url = baseUrl_
-        + "/search/movie?api_key=" + apiKey_
-        + "&language=en-US&include_adult=false&page=1&query=" + urlEncode(query);
-
-    nlohmann::json j = getJson(url);
-
-    std::vector<Movie> out;
-    if (!j.contains("results") || !j["results"].is_array())
-        return out;
-
-    int count = 0;
-    for (auto& r : j["results"]) {
-        if (count >= limit) break;
-
-        Movie m;
-        m.tmdbId = r.value("id", 0);
-        m.name   = r.value("title", "");
-
-        if (r.contains("vote_average") && !r["vote_average"].is_null())
-            m.rating = r["vote_average"].get<double>();
-
-        if (r.contains("release_date") && r["release_date"].is_string()) {
-            if (auto date = r["release_date"].get<std::string>(); date.size() >= 4)
-                m.year = std::stoi(date.substr(0, 4));
-        }
-
-        if (m.tmdbId != 0 && !m.name.empty()) {
-            out.push_back(std::move(m));
-            ++count;
-        }
-    }
-
-    return out;
 }
 
 std::vector<Movie> TmdbAPI::fetchPopularMovies(const int poolSize) const {
@@ -89,45 +55,47 @@ std::vector<Movie> TmdbAPI::fetchPopularMovies(const int poolSize) const {
 
     const auto genreMap = fetchGenreMap();
 
+
     for (int page = 1; page <= maxPages; ++page) {
-        std::string url = baseUrl_
-            + "/movie/popular"
-            + "?api_key=" + apiKey_
-            + "&language=en-US"
-            + "&page=" + std::to_string(page);
+        const std::string url = baseUrl_ +
+            "/movie/popular" +
+            "?api_key=" + apiKey_ +
+            "&language=en-US" +
+            "&page=" + std::to_string(page);
 
         nlohmann::json j = getJson(url);
-        if (!j.contains("results") || !j["results"].is_array())
-            break;
+        if (!j.contains("results") || !j["results"].is_array()) break;
 
         for (const auto& r : j["results"]) {
             constexpr double MIN_POPULARITY = 10.0;
             constexpr int MIN_VOTE_COUNT = 300;
-            if (static_cast<int>(result.size()) >= poolSize)
-                break;
+            if (static_cast<int>(result.size()) >= poolSize) break;
 
-            int voteCount = r.value("vote_count", 0);
-            double popularity = r.value("popularity", 0.0);
-            if (voteCount < MIN_VOTE_COUNT || popularity < MIN_POPULARITY)
+            const int    voteCount  = r.value("vote_count", 0);
+            if (const double popularity = r.value("popularity", 0.0); voteCount < MIN_VOTE_COUNT || popularity < MIN_POPULARITY) {
                 continue;
+            }
 
             Movie m;
             m.tmdbId = r.value("id", 0);
             m.name   = r.value("title", "");
-            if (m.tmdbId == 0 || m.name.empty())
+            if (m.tmdbId == 0 || m.name.empty()) {
                 continue;
+            }
 
-            if (r.contains("vote_average") && r["vote_average"].is_number())
+            if (r.contains("vote_average") && r["vote_average"].is_number()) {
                 m.rating = r["vote_average"].get<double>();
+            }
 
             if (r.contains("release_date") && r["release_date"].is_string()) {
-                if (auto date = r["release_date"].get<std::string>(); date.size() >= 4)
+                if (const std::string date = r["release_date"].get<std::string>(); date.size() >= 4) {
                     m.year = std::stoi(date.substr(0, 4));
+                }
             }
 
             if (r.contains("genre_ids") && r["genre_ids"].is_array()) {
                 for (const auto& gidJson : r["genre_ids"]) {
-                    int gid = gidJson.get<int>();
+                    const int gid = gidJson.get<int>();
                     if (auto it = genreMap.find(gid); it != genreMap.end()) {
                         m.genres.push_back(it->second);
                     }
@@ -137,8 +105,7 @@ std::vector<Movie> TmdbAPI::fetchPopularMovies(const int poolSize) const {
             result.push_back(std::move(m));
         }
 
-        if (static_cast<int>(result.size()) >= poolSize)
-            break;
+        if (static_cast<int>(result.size()) >= poolSize) break;
     }
 
     return result;
@@ -149,17 +116,16 @@ std::vector<Movie> TmdbAPI::searchMoviesByTitle(const std::string& query,
     std::vector<Movie> out;
     if (query.empty() || limit <= 0) return out;
 
-    const std::string url = baseUrl_
-        + "/search/movie"
-        + "?api_key=" + apiKey_
-        + "&language=en-US"
-        + "&include_adult=false"
-        + "&page=1"
-        + "&query=" + urlEncode(query);
+    const std::string url = baseUrl_ +
+        "/search/movie" +
+        "?api_key=" + apiKey_ +
+        "&language=en-US" +
+        "&include_adult=false" +
+        "&page=1" +
+        "&query=" + urlEncode(query);
 
     nlohmann::json j = getJson(url);
-    if (!j.contains("results") || !j["results"].is_array())
-        return out;
+    if (!j.contains("results") || !j["results"].is_array()) return out;
 
     for (const auto& r : j["results"]) {
         if (static_cast<int>(out.size()) >= limit) break;
@@ -167,15 +133,17 @@ std::vector<Movie> TmdbAPI::searchMoviesByTitle(const std::string& query,
         Movie m;
         m.tmdbId = r.value("id", 0);
         m.name   = r.value("title", "");
-        if (m.tmdbId == 0 || m.name.empty())
-            continue;
+        if (m.tmdbId == 0 || m.name.empty()) continue;
 
-        if (r.contains("vote_average") && r["vote_average"].is_number())
+        if (r.contains("vote_average") && r["vote_average"].is_number()) {
             m.rating = r["vote_average"].get<double>();
+        }
 
         if (r.contains("release_date") && r["release_date"].is_string()) {
-            if (auto date = r["release_date"].get<std::string>(); date.size() >= 4)
+            const std::string date = r["release_date"].get<std::string>();
+            if (date.size() >= 4) {
                 m.year = std::stoi(date.substr(0, 4));
+            }
         } else {
             continue;
         }
@@ -198,7 +166,9 @@ size_t TmdbAPI::writeCallback(const char* ptr,
 
 nlohmann::json TmdbAPI::getJson(const std::string& url) {
     CURL* curl = curl_easy_init();
-    if (!curl) throw std::runtime_error("curl_easy_init failed");
+    if (!curl) {
+        throw std::runtime_error("curl_easy_init failed");
+    }
 
     std::string response;
 
@@ -214,23 +184,27 @@ nlohmann::json TmdbAPI::getJson(const std::string& url) {
 
     if (res != CURLE_OK) {
         throw std::runtime_error(
-            std::string("curl_easy_perform failed: ") + curl_easy_strerror(res));
+            std::string("curl_easy_perform failed: ") +
+            curl_easy_strerror(res));
     }
+
     if (httpCode < 200 || httpCode >= 300) {
         throw std::runtime_error(
-            "TMDB HTTP error " + std::to_string(httpCode) + " | body: " + response);
+            "TMDB HTTP error " + std::to_string(httpCode) +
+            " | body: " + response);
     }
 
     try {
         return nlohmann::json::parse(response);
     } catch (const std::exception& e) {
         throw std::runtime_error(
-            std::string("JSON parse failed: ") + e.what() + " | body: " + response);
+            std::string("JSON parse failed: ") + e.what() +
+            " | body: " + response);
     }
 }
 
 std::string TmdbAPI::urlEncode(const std::string& s) {
-    static const char* hex = "0123456789ABCDEF";
+    static auto hex = "0123456789ABCDEF";
     std::string out;
     for (const unsigned char c : s) {
         if (('a' <= c && c <= 'z') ||
@@ -250,18 +224,18 @@ std::string TmdbAPI::urlEncode(const std::string& s) {
 }
 
 std::unordered_map<int, std::string> TmdbAPI::fetchGenreMap() const {
-    const std::string url = baseUrl_
-        + "/genre/movie/list"
-        + "?api_key=" + apiKey_
-        + "&language=en-US";
+    const std::string url = baseUrl_ +
+        "/genre/movie/list" +
+        "?api_key=" + apiKey_ +
+        "&language=en-US";
 
     nlohmann::json j = getJson(url);
 
     std::unordered_map<int, std::string> map;
     if (j.contains("genres") && j["genres"].is_array()) {
         for (const auto& g : j["genres"]) {
-            int id = g.value("id", 0);
-            if (std::string name = g.value("name", ""); id != 0 && !name.empty()) {
+            const int id = g.value("id", 0);
+            if (const std::string name = g.value("name", ""); id != 0 && !name.empty()) {
                 map[id] = name;
             }
         }

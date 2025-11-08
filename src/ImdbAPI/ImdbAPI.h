@@ -13,13 +13,9 @@ public:
 
     [[nodiscard]] Movie fetchMovieById(int tmdbId) const;
 
-    [[nodiscard]] std::vector<Movie> searchByTitle(const std::string& query,
-                                                   int limit = 5) const;
-
     [[nodiscard]] std::vector<Movie> fetchPopularMovies(int poolSize) const;
 
-    [[nodiscard]] std::vector<Movie> searchMoviesByTitle(const std::string& query,
-                                                         int limit = 5) const;
+    [[nodiscard]] std::vector<Movie> searchMoviesByTitle(const std::string& query, int limit = 5) const;
 
 private:
     std::string apiKey_;
