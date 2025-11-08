@@ -16,7 +16,7 @@ inline double similarityScore(const Movie& a, const Movie& b) {
 
     score += 1.5 * commonGenres;
 
-    double diff = std::fabs(a.rating - b.rating);
+    const double diff = std::fabs(a.rating - b.rating);
     score += std::max(0.0, 2.0 - diff);
 
     int yearDiff = std::abs(a.year - b.year);

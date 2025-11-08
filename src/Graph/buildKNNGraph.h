@@ -18,7 +18,7 @@ inline void buildKNNGraph(Graph& g, const int K) {
             if (i == j) continue;
             double sim = similarityScore(movies[i], movies[j]);
             if (sim > 0.0)
-                sims.push_back({sim, j});
+                sims.emplace_back(sim, j);
         }
 
         if (sims.empty()) continue;

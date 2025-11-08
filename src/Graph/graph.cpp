@@ -22,7 +22,7 @@ int Graph::addMovie(const Movie& movie) {
     return idx;
 }
 
-void Graph::addEdge(const int from, const int to, const int weight) {
+void Graph::addEdge(const int from, const int to, const double weight) {
     adj[from].push_back(Edge{to, weight});
     adj[to].push_back(Edge{from, weight});
 }

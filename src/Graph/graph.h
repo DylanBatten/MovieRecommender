@@ -6,7 +6,7 @@
 
 struct Edge {
     int to;
-    int weight;
+    double weight;
 };
 
 
@@ -18,7 +18,7 @@ private:
 
 public:
     int addMovie(const Movie &movie);
-    void addEdge(int from, int to, int weight);
+    void addEdge(int from, int to, double weight);
     int indexOf(const int &imdbId);
     [[nodiscard]] std::vector<Movie> getMovies() const;
     [[nodiscard]] std::vector<std::vector<Edge>> getAdj() const;

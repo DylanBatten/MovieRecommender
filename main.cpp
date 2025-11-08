@@ -55,7 +55,7 @@ int main() {
             sims.reserve(n);
             for (int i = 0; i < n - 1; ++i) {
                 if (double sim = similarityScore(seed, all[i]); sim > 0.0)
-                    sims.push_back({sim, i});
+                    sims.emplace_back(sim, i);
             }
 
             constexpr int K = K_NEIGHBORS;
