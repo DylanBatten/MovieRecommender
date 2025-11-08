@@ -1,0 +1,28 @@
+#ifndef MOVIERECOMMENDER_GRAPH_H
+#define MOVIERECOMMENDER_GRAPH_H
+#include <unordered_map>
+#include <vector>
+#include "../MoviesUtil/Movie.h"
+
+struct Edge {
+    int to;
+    int weight;
+};
+
+
+class Graph {
+private:
+    std::vector<Movie> movies;
+    std::vector<std::vector<Edge>> adj;
+    std::unordered_map<int, int> idToIndex;
+
+public:
+    int addMovie(const Movie &movie);
+    void addEdge(int from, int to, int weight);
+    int indexOf(const int &imdbId);
+    [[nodiscard]] std::vector<Movie> getMovies() const;
+    [[nodiscard]] std::vector<std::vector<Edge>> getAdj() const;
+};
+
+
+#endif //MOVIERECOMMENDER_GRAPH_H
