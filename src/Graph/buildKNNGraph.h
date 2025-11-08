@@ -5,7 +5,7 @@
 
 inline void buildKNNGraph(Graph& g, const int K) {
     const auto& movies = g.getMovies();
-    int n = static_cast<int>(movies.size());
+    const int n = static_cast<int>(movies.size());
     if (n == 0) return;
 
     std::vector<std::pair<double,int>> sims;
@@ -16,8 +16,7 @@ inline void buildKNNGraph(Graph& g, const int K) {
 
         for (int j = 0; j < n; ++j) {
             if (i == j) continue;
-            double sim = similarityScore(movies[i], movies[j]);
-            if (sim > 0.0)
+            if (double sim = similarityScore(movies[i], movies[j]); sim > 0.0)
                 sims.emplace_back(sim, j);
         }
 

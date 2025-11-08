@@ -11,17 +11,16 @@ struct Edge {
 
 
 class Graph {
-private:
-    std::vector<Movie> movies;
-    std::vector<std::vector<Edge>> adj;
-    std::unordered_map<int, int> idToIndex;
-
 public:
     int addMovie(const Movie &movie);
     void addEdge(int from, int to, double weight);
     int indexOf(const int &imdbId);
     [[nodiscard]] std::vector<Movie> getMovies() const;
     [[nodiscard]] std::vector<std::vector<Edge>> getAdj() const;
+private:
+    std::vector<Movie> movies;
+    std::vector<std::vector<Edge>> adj;
+    std::unordered_map<int, int> idToIndex;
 };
 
 

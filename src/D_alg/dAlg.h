@@ -22,7 +22,7 @@ struct CompareState {
 
 inline DijkstraResult dijkstra(const int src, const std::vector<std::vector<Edge>>& adj) {
     constexpr double INF = std::numeric_limits<double>::infinity();
-    int n = static_cast<int>(adj.size());
+    const int n = static_cast<int>(adj.size());
 
     std::vector<double> dist(n, INF);
     std::vector<int> parent(n, -1);
@@ -35,8 +35,8 @@ inline DijkstraResult dijkstra(const int src, const std::vector<std::vector<Edge
         NodeState cur = pq.top();
         pq.pop();
 
-        int u = cur.node;
-        double d = cur.dist;
+        const int u = cur.node;
+        const double d = cur.dist;
 
         if (d > dist[u]) continue;
 
@@ -53,7 +53,7 @@ inline DijkstraResult dijkstra(const int src, const std::vector<std::vector<Edge
     return {dist, parent};
 }
 
-inline std::vector<int> buildPath(int target, const std::vector<int>& parent) {
+inline std::vector<int> buildPath(const int target, const std::vector<int>& parent) {
     std::vector<int> path;
     for (int curr = target; curr != -1; curr = parent[curr]) {
         path.push_back(curr);

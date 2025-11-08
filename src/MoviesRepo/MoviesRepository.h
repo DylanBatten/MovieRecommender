@@ -5,20 +5,19 @@
 
 
 class MoviesRepository {
-private:
-    TmdbAPI& api;
-    std::unordered_map<int, Movie> cache;
 public:
     explicit MoviesRepository(TmdbAPI& api) : api(api) {}
 
     const Movie& getMovie(int tmdbId) {
-        auto it = cache.find(tmdbId);
-        if (it != cache.end()) return it->second;
+        if (const auto it = cache.find(tmdbId); it != cache.end()) return it->second;
 
         Movie m = api.fetchMovieById(tmdbId);
         auto [pos, _] = cache.emplace(tmdbId, std::move(m));
         return pos->second;
     }
+private:
+    TmdbAPI& api;
+    std::unordered_map<int, Movie> cache;
 };
 
 

@@ -1,6 +1,7 @@
 #ifndef MOVIERECOMMENDER_RUNGRAPH_H
 #define MOVIERECOMMENDER_RUNGRAPH_H
 #include <iostream>
+#include <cctype>
 #include "./ImdbAPI/ImdbAPI.h"
 #include "./MoviesUtil/Movie.h"
 #include "./Graph/graph.h"
@@ -14,13 +15,13 @@ inline int runGraph() {
     try {
         TmdbAPI api("c9a60d0459daa5ba1f1de1f284b07980");
 
-        int NUM_PAGES = 0;
-        std:: cout << "Enter movie pool fetch size (multiple of 100): ";
-        std:: cin >> NUM_PAGES;
-        NUM_PAGES /= 20;
+        int poolSize = 0;
+        std::cout << "Enter movie pool size (number of popular movies to load): ";
+        std::cin >> poolSize;
+
 
         std::cout << "Fetching popular movies from TMDB...\n";
-        std::vector<Movie> moviesFromApi = api.fetchPopularMovies(NUM_PAGES);
+        std::vector<Movie> moviesFromApi = api.fetchPopularMovies(poolSize);
 
 
         if (moviesFromApi.empty()) {
@@ -35,7 +36,7 @@ inline int runGraph() {
         }
         std::cout << "Graph nodes: " << g.getMovies().size() << "\n";
 
-        constexpr int K_NEIGHBORS = 30;
+        constexpr int K_NEIGHBORS = 20;
         std::cout << "Building similarity graph (K=" << K_NEIGHBORS << ")...\n";
         buildKNNGraph(g, K_NEIGHBORS);
         std::cout << "Graph built.\n";
@@ -56,7 +57,7 @@ inline int runGraph() {
                 continue;
             }
 
-            int chosen = 0;
+            char chosen = '0';
             if (candidates.size() > 1) {
                 while (true) {
                     std::cout << "\nSelect which movie you meant:\n";
@@ -71,8 +72,13 @@ inline int runGraph() {
                     }
                     std::cout << "Enter choice [0-" << static_cast<int>(candidates.size()) - 1 << "]: ";
                     std::cin >> chosen;
+                    if (!std::isdigit(chosen)) {
+                        std::cout << "Invalid choice.\n";
+                        continue;
+                    }
+                    chosen = chosen - '0';
                     if (chosen < 0 || chosen >= static_cast<int>(candidates.size())) {
-                        std::cerr << "Invalid choice.\n";
+                        std::cout << "Invalid choice.\n";
                         continue;
                     }
                     std::cout << "\n" << std::endl;
