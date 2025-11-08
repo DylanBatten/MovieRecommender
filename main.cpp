@@ -7,10 +7,6 @@
 #include "./Graph/loadgraph.h"
 #include "./Graph/buildKNNGraph.h"
 
-using std::cout;
-using std::cin;
-using std::endl;
-
 int main() {
     try {
         TmdbAPI api("c9a60d0459daa5ba1f1de1f284b07980");
