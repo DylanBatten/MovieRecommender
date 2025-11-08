@@ -35,7 +35,7 @@ inline void buildKNNGraph(Graph& g, const int K) {
         }
 
         for (auto& [sim, j] : sims) {
-            double w = weightFromSimilarity(sim);
+            const double w = weightFromSimilarity(sim);
             g.addEdge(i, j, w);
         }
     }

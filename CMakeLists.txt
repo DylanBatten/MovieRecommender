@@ -27,7 +27,8 @@ add_executable(MovieRecommender main.cpp
         src/Graph/savegraph.cpp
         src/Graph/savegraph.h
         src/Graph/buildKNNGraph.cpp
-        src/Graph/buildKNNGraph.h)
+        src/Graph/buildKNNGraph.h
+        RunGraph.h)
 
 target_include_directories(MovieRecommender PRIVATE
         ${CMAKE_SOURCE_DIR}/single_include

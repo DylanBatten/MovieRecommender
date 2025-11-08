@@ -19,7 +19,7 @@ public:
         curl_global_cleanup();
     }
 
-    Movie fetchMovieById(int tmdbId) const {
+    [[nodiscard]] Movie fetchMovieById(int tmdbId) const {
         const std::string url = baseUrl_ + "/movie/" + std::to_string(tmdbId)
             + "?api_key=" + apiKey_ + "&language=en-US";
 
@@ -51,8 +51,8 @@ public:
     }
 
     // GET /search/movie
-    std::vector<Movie> searchByTitle(const std::string& query, int limit = 5) const {
-        std::string url = baseUrl_ + "/search/movie?api_key=" + apiKey_
+    [[nodiscard]] std::vector<Movie> searchByTitle(const std::string& query, int limit = 5) const {
+        const std::string url = baseUrl_ + "/search/movie?api_key=" + apiKey_
         + "&language=en-US&include_adult=false&page=1&query=" + urlEncode(query);
 
         nlohmann::json j = getJson(url);
@@ -87,7 +87,7 @@ public:
         return out;
     }
 
-    std::vector<Movie> fetchPopularMovies(const int numPages) const {
+    [[nodiscard]] std::vector<Movie> fetchPopularMovies(const int numPages) const {
         std::vector<Movie> result;
         if (numPages < 1) return result;
 
@@ -123,6 +123,45 @@ public:
         }
 
         return result;
+    }
+
+    [[nodiscard]] std::vector<Movie> searchMoviesByTitle(const std::string& query, const int limit = 5) const {
+        std::vector<Movie> out;
+        if (query.empty() || limit <= 0) return out;
+
+        const std::string url = baseUrl_
+            + "/search/movie"
+            + "?api_key=" + apiKey_
+            + "&language=en-US"
+            + "&include_adult=false"
+            + "&page=1"
+            + "&query=" + urlEncode(query);
+
+        nlohmann::json j = getJson(url);
+        if (!j.contains("results") || !j["results"].is_array())
+            return out;
+
+        for (const auto& r : j["results"]) {
+            if (static_cast<int>(out.size()) >= limit) break;
+
+            Movie m;
+            m.tmdbId = r.value("id", 0);
+            m.name  = r.value("title", "");
+            if (m.tmdbId == 0 || m.name.empty())
+                continue;
+
+            if (r.contains("vote_average") && r["vote_average"].is_number())
+                m.rating = r["vote_average"].get<double>();
+
+            if (r.contains("release_date") && r["release_date"].is_string()) {
+                if (auto date = r["release_date"].get<std::string>(); date.size() >= 4)
+                    m.year = std::stoi(date.substr(0, 4));
+            }
+            else continue;
+            out.push_back(std::move(m));
+        }
+
+        return out;
     }
 
 private:
@@ -172,7 +211,7 @@ private:
     static std::string urlEncode(const std::string& s) {
         static auto hex = "0123456789ABCDEF";
         std::string out;
-        for (unsigned char c : s) {
+        for (const unsigned char c : s) {
             if (('a' <= c && c <= 'z') ||
                 ('A' <= c && c <= 'Z') ||
                 ('0' <= c && c <= '9') ||
