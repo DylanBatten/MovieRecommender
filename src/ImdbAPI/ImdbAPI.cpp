@@ -177,6 +177,8 @@ nlohmann::json TmdbAPI::getJson(const std::string& url) {
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+
     const CURLcode res = curl_easy_perform(curl);
     long httpCode = 0;
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpCode);
