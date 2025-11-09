@@ -28,8 +28,8 @@ void runBenchmarkDemo() {
     
     std::cout << "\nLoaded " << movies.size() << " movies.\n\n";
 
-    std::cout << "Sample Movies (0-" << std::min(9, (int)movies.size()-1) << "):\n";
-    for (int i = 0; i < std::min(10, (int)movies.size()); ++i) {
+    std::cout << "Sample Movies (0-" << std::min(9, static_cast<int>(movies.size())-1) << "):\n";
+    for (int i = 0; i < std::min(10, static_cast<int>(movies.size())); ++i) {
         std::cout << "  [" << i << "] " << movies[i].name 
                   << " (" << movies[i].year << ") - Rating: " << movies[i].rating << "\n";
     }
