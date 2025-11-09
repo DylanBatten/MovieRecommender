@@ -27,17 +27,9 @@ ${CMAKE_SOURCE_DIR}/single_include
 ${CMAKE_SOURCE_DIR}/src
 )
 
-set(CURL_INCLUDE_DIR "C:/curl/curl-8.17.0_1-win64-mingw/include")
-set(CURL_LIBRARY "C:/curl/curl-8.17.0_1-win64-mingw/lib/libcurl.dll.a")
-set(OPENSSL_LIB_PATH "C:/curl/curl-8.17.0_1-win64-mingw/lib")
+find_package(CURL REQUIRED)
 
-include_directories(${CURL_INCLUDE_DIR})
-target_link_libraries(MovieRecommender PRIVATE
-${CURL_LIBRARY}
-${OPENSSL_LIB_PATH}/libssl.a
-${OPENSSL_LIB_PATH}/libcrypto.a
-ws2_32
-wldap32
-crypt32
-z
+target_link_libraries(MovieRecommender
+        PRIVATE
+        CURL::libcurl
 )
