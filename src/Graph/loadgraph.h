@@ -47,7 +47,6 @@ inline Graph loadGraphFromDisk(const std::string& path) {
         throw std::runtime_error("Graph 'adj' size does not match 'movies' size");
     }
 
-    // Create edges using the graph's addEdge method instead of modifying a local copy
     for (std::size_t i = 0; i < n; ++i) {
         const auto& row = adjJson[i];
         if (!row.is_array()) {
@@ -62,7 +61,6 @@ inline Graph loadGraphFromDisk(const std::string& path) {
                 throw std::runtime_error("Invalid 'to' index in adj at row " + std::to_string(i));
             }
 
-            // Use the graph's addEdge method to actually add the edge to the graph
             g.addEdge(static_cast<int>(i), to, weight);
         }
     }

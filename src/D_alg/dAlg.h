@@ -2,8 +2,8 @@
 #define MOVIERECOMMENDER_DALG_H
 #include <queue>
 #include <vector>
-#include <algorithm>   // for std::reverse
-#include <limits>      // for numeric_limits
+#include <algorithm>
+#include <limits>
 #include "../Graph/graph.h"
 
 struct DijkstraResult {

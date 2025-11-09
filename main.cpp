@@ -8,8 +8,7 @@
 
 void runBenchmarkDemo() {
     std::cout << "=== Movie Recommender Benchmarking ===\n\n";
-    
-    // Try to load existing graph first
+
     Graph graph;
     try {
         std::cout << "Attempting to load graph from disk...\n";
@@ -28,15 +27,13 @@ void runBenchmarkDemo() {
     }
     
     std::cout << "\nLoaded " << movies.size() << " movies.\n\n";
-    
-    // Display some sample movies for user to choose from
+
     std::cout << "Sample Movies (0-" << std::min(9, (int)movies.size()-1) << "):\n";
     for (int i = 0; i < std::min(10, (int)movies.size()); ++i) {
         std::cout << "  [" << i << "] " << movies[i].name 
                   << " (" << movies[i].year << ") - Rating: " << movies[i].rating << "\n";
     }
-    
-    // Get user input
+
     int sourceIndex, k;
     std::cout << "\nEnter source movie index (0-" << movies.size()-1 << "): ";
     std::cin >> sourceIndex;
@@ -53,8 +50,7 @@ void runBenchmarkDemo() {
         std::cout << "K should be between 1 and 100.\n";
         return;
     }
-    
-    // Run the benchmark comparison
+
     Benchmark::compareAlgorithms(graph, sourceIndex, k);
 }
 

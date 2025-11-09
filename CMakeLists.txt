@@ -11,7 +11,7 @@ src/MoviesUtil/Movie.h
 src/MoviesUtil/similarityScore.h
 src/Graph/buildEdges.h
 src/D_alg/topKRecommendations.h
-src/ImdbAPI/ImdbAPI.cpp        # ✅ ADD THIS LINE
+src/ImdbAPI/ImdbAPI.cpp
 src/ImdbAPI/ImdbAPI.h
 src/MoviesRepo/MoviesRepository.h
 src/Graph/buildGlobalGraph.h
@@ -19,8 +19,8 @@ src/Graph/loadgraph.h
 src/Graph/savegraph.h
 src/Graph/buildKNNGraph.h
 RunGraph.h
-src/Benchmarking/benchmark.h                     # ✅ ADD THIS LINE
-src/Heap/heapTopK.h)                     # ✅ ADD THIS LINE
+src/Benchmarking/benchmark.h
+src/Heap/heapTopK.h)
 
 target_include_directories(MovieRecommender PRIVATE
 ${CMAKE_SOURCE_DIR}/single_include

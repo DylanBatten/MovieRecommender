@@ -9,7 +9,6 @@ inline double similarityScore(const Movie& a, const Movie& b) {
     double score = 0.0;
     double weightSum = 0.0;
 
-    // ---------- Genres ----------
 
     if (!a.genres.empty() && !b.genres.empty()) {
         double genreSim = 0.0;

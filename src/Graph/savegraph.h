@@ -14,7 +14,6 @@ inline void saveGraphToDisk(const Graph& g, const std::string& path) {
 
     j["movies"] = nlohmann::json::array();
 
-    // REVERTED: Use safe member access instead of fragile structured binding
     for (const auto& m : movies) {
         nlohmann::json jm;
         jm["tmdbId"] = m.tmdbId;
@@ -31,7 +30,6 @@ inline void saveGraphToDisk(const Graph& g, const std::string& path) {
 
     j["adj"] = nlohmann::json::array();
 
-    // REVERTED: Use safe member access for edges too
     for (const auto& nbrs : adj) {
         nlohmann::json row = nlohmann::json::array();
 
