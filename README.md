@@ -4,7 +4,7 @@
 
 ### 1. Required Files
 - Download all files from the GitHub repository
-- Ensure `ml-25m/` folder is in the project root
+- Ensure `ml-25m/` folder is in the project root (DOWNLOAD: https://www.kaggle.com/datasets/garymk/movielens-25m-dataset)
 - Copy `libcurl-x64.dll` to `cmake-build-debug/` folder
 
 ### 2. Running the Program
