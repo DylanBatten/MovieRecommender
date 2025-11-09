@@ -9,6 +9,7 @@
 #include "./D_alg/topKRecommendations.h"
 #include "./Graph/loadgraph.h"
 #include "./Graph/buildKNNGraph.h"
+#include "./Graph/savegraph.h"
 
 
 inline int runGraph() {
@@ -40,6 +41,13 @@ inline int runGraph() {
         std::cout << "Building similarity graph (K=" << K_NEIGHBORS << ")...\n";
         buildKNNGraph(g, K_NEIGHBORS);
         std::cout << "Graph built.\n";
+
+        try {
+            saveGraphToDisk(g, "movie_graph.json");
+            std::cout << "✓ Graph saved to 'movie_graph.json' for benchmarking.\n";
+        } catch (const std::exception& e) {
+            std::cout << "⚠️  Could not save graph for benchmarking: " << e.what() << "\n";
+        }
 
         while (true) {
 

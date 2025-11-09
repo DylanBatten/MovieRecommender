@@ -14,13 +14,14 @@ inline void saveGraphToDisk(const Graph& g, const std::string& path) {
 
     j["movies"] = nlohmann::json::array();
 
-    for (const auto&[tmdbId, name, genres, rating, year] : movies) {
+    // REVERTED: Use safe member access instead of fragile structured binding
+    for (const auto& m : movies) {
         nlohmann::json jm;
-        jm["tmdbId"] = tmdbId;
-        jm["title"]  = name;
-        jm["genres"] = genres;
-        jm["rating"] = rating;
-        jm["year"]   = year;
+        jm["tmdbId"] = m.tmdbId;
+        jm["title"]  = m.name;
+        jm["genres"] = m.genres;
+        jm["rating"] = m.rating;
+        jm["year"]   = m.year;
         j["movies"].push_back(jm);
     }
 
@@ -30,13 +31,14 @@ inline void saveGraphToDisk(const Graph& g, const std::string& path) {
 
     j["adj"] = nlohmann::json::array();
 
+    // REVERTED: Use safe member access for edges too
     for (const auto& nbrs : adj) {
         nlohmann::json row = nlohmann::json::array();
 
-        for (const auto&[to, weight] : nbrs) {
+        for (const auto& e : nbrs) {
             nlohmann::json je;
-            je["to"] = to;
-            je["w"]  = weight;
+            je["to"] = e.to;
+            je["w"]  = e.weight;
             row.push_back(je);
         }
 
@@ -50,6 +52,5 @@ inline void saveGraphToDisk(const Graph& g, const std::string& path) {
 
     out << j.dump(2) << '\n';
 }
-
 
 #endif //MOVIERECOMMENDER_SAVEGRAPH_H

@@ -1,6 +1,8 @@
 #ifndef MOVIERECOMMENDER_TOPKRECC_H
 #define MOVIERECOMMENDER_TOPKRECC_H
 #include <vector>
+#include <algorithm>
+#include <cmath>
 #include "../D_alg/dAlg.h"
 
 
@@ -19,7 +21,7 @@ inline std::vector<int> topKRecommendations(
         idx.push_back(i);
     }
 
-    std::ranges::sort(idx, [&](const int a, const int b)
+    std::sort(idx.begin(), idx.end(), [&](const int a, const int b)
         {
             return res.distance[a] < res.distance[b];
         });

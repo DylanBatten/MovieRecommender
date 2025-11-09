@@ -1,7 +1,8 @@
 #ifndef MOVIERECOMMENDER_BUILDGLOBALGRAPH_H
 #define MOVIERECOMMENDER_BUILDGLOBALGRAPH_H
-#include "Graph.h"
+#include "graph.h"
 #include "../MoviesUtil/similarityScore.h"
+#include <algorithm>
 
 inline void buildGlobalGraph(Graph& g, const std::vector<Movie>& all) {
     for (const auto& m : all)
@@ -23,13 +24,13 @@ inline void buildGlobalGraph(Graph& g, const std::vector<Movie>& all) {
         if (sims.empty()) continue;
 
         if (int K = 40; static_cast<int>(sims.size()) > K) {
-            std::ranges::nth_element(sims, sims.begin() + K,
-            [](auto& a, auto& b){ return a.first > b.first; }
+            std::nth_element(sims.begin(), sims.begin() + K, sims.end(),
+                [](const auto& a, const auto& b){ return a.first > b.first; }
             );
             sims.resize(K);
         } else {
-            std::ranges::sort(sims,
-            [](auto& a, auto& b){ return a.first > b.first; }
+            std::sort(sims.begin(), sims.end(),
+                [](const auto& a, const auto& b){ return a.first > b.first; }
             );
         }
 

@@ -2,6 +2,8 @@
 #define MOVIERECOMMENDER_DALG_H
 #include <queue>
 #include <vector>
+#include <algorithm>   // for std::reverse
+#include <limits>      // for numeric_limits
 #include "../Graph/graph.h"
 
 struct DijkstraResult {
@@ -58,7 +60,7 @@ inline std::vector<int> buildPath(const int target, const std::vector<int>& pare
     for (int curr = target; curr != -1; curr = parent[curr]) {
         path.push_back(curr);
     }
-    std::ranges::reverse(path);
+    std::ranges::reverse(path.begin(), path.end());
     return path;
 }
 

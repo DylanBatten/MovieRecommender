@@ -39,3 +39,5 @@ std::vector<Movie> Graph::getMovies() const{
 std::vector<std::vector<Edge>> Graph::getAdj() const {
     return adj;
 }
+
+
